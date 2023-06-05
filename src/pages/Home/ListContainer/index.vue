@@ -4,7 +4,7 @@
     <div class="sortList clearfix">
       <div class="center">
         <!--banner轮播-->
-        <div class="swiper-container" id="mySwiper">
+        <div class="swiper-container" ref="mySwiper">
           <div class="swiper-wrapper">
             <div
               class="swiper-slide"
@@ -134,8 +134,35 @@ export default {
       },
     }),
   },
-  watch:{
-    bannerList
+  watch: {
+    bannerList: {
+      //监听bannerList数据的变化：因为这条数据发生过变化-----由空数组变为数组里有4个元素
+      handler(newValue, oldValue) {
+        //如果执行handle方法，代表组件实例身上这个属性的属性值已经有了
+        //当前这个函数执行：只能保证bannerList数据已经有了，但是没法保证v-for已经执行结束了
+        //v-for执行完毕，才有dom结构
+        //nextTick：在下次DOM更新循环结束之后执行延迟回调。   在修改数据之后立即执行这个方法，获取更新后的DOM
+        this.$nextTick(()=>{
+          //当你执行这个回调的时候：保证服务器数据回来了，v-for执行完毕了
+          new Swiper(this.$refs.mySwiper, {
+            // direction: "vertical", // 垂直切换选项
+            loop: true, // 循环模式选项
+
+            // 如果需要分页器
+            pagination: {
+              el: ".swiper-pagination",
+              clickable: true,
+            },
+
+            // 如果需要前进后退按钮
+            navigation: {
+              nextEl: ".swiper-button-next",
+              prevEl: ".swiper-button-prev",
+            },
+          });
+        });
+      },
+    },
   },
 };
 </script>
